@@ -14,10 +14,23 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
-
+  <profiles>
+    <profile>
+      <id>jdk-17</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <jdk>17</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+      </properties>
+    </profile>
+  </profiles>
   <dependencies>
   <dependency>
       <groupId>com.google.inject</groupId>
