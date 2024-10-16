@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 03:45:11
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 03:48:48
+ * @LastEditTime: 2024-10-17 06:05:30
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server;
@@ -25,9 +25,7 @@ public class FtpMessageTest {
 
     @Test
     public void ftpMsgTest(){
-        FtpMessage msg = new FtpMessage();
-        msg.setCode(220);
-        msg.setMessage("Ftp server ready");
+        FtpMessage msg = new FtpMessage(220, "Ftp server ready");
         assertEquals(
             "220 Ftp server ready\r\n",
             msg.toString()
