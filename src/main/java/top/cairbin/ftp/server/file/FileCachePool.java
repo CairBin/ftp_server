@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 02:33:34
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 03:11:23
+ * @LastEditTime: 2024-10-17 03:37:38
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.file;
@@ -28,13 +28,14 @@ public class FileCachePool implements IFileCachePool{
 
     public FileCachePool(int maxSize){
         this.maxSize = maxSize;
+        this.files = new HashMap<>();
     }
 
     public FileCachePool(){
         this(10);
     }
 
-    public boolean createFile(String path){
+    public boolean createFile(String path) throws Exception{
         if(this.files.containsKey(path)) return false;
 
         lock.lock();
@@ -52,7 +53,7 @@ public class FileCachePool implements IFileCachePool{
             }
         }catch(Exception e){
             lock.unlock();
-            return false;
+            throw e;
         }
 
         lock.unlock();
@@ -71,14 +72,16 @@ public class FileCachePool implements IFileCachePool{
     }
 
     public RwLock<File> get(String path) throws Exception{
-        if(!isExist(path))
-            throw new Error("Not found file");
-
         lock.lock();
         if(this.has(path)){
             RwLock<File> file = this.files.get(path);
             lock.unlock();
             return file;
+        }
+
+        if(!isExist(path)){
+            lock.unlock();
+            throw new Exception("File not found: " + path);
         }
 
         RwLock<File> file = new RwLock(new File(path));

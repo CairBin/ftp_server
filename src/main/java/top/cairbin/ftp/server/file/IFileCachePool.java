@@ -15,7 +15,7 @@ import java.io.File;
 import top.cairbin.ftp.server.lock.RwLock;
 
 public interface IFileCachePool {
-    public boolean createFile(String path);
+    public boolean createFile(String path) throws Exception;
 
     public boolean isExist(String path);
 
