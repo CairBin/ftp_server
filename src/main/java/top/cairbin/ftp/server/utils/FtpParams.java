@@ -1,4 +1,4 @@
-package top.cairbin.utils;
+package top.cairbin.ftp.server.utils;
 
 import lombok.Getter;
 import lombok.Setter;

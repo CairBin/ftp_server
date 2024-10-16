@@ -8,7 +8,7 @@
  * @LastEditTime: 2024-10-17 01:35:55
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
-package top.cairbin.utils;
+package top.cairbin.ftp.server.utils;
 
 public class FtpCommandParser {
     public static FtpParams parse(String message){
@@ -63,7 +63,7 @@ public class FtpCommandParser {
                     int p1 = Integer.parseInt(parts[4]);
                     int p2 = Integer.parseInt(parts[5]);
                     // 计算端口号
-                    int port = p1 << 8 + p2;
+                    int port = p1 * 256 + p2;
                     args = String.format("%s:%s", ipAddress, port);
                     break;
                 case RETR:

@@ -8,7 +8,7 @@
  * @LastEditTime: 2024-10-17 01:05:36
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
-package top.cairbin.utils;
+package top.cairbin.ftp.server.utils;
 
 public enum FtpCommand {
     // 接入命令
