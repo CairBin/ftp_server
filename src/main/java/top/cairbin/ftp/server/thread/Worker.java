@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 01:54:08
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 01:54:18
+ * @LastEditTime: 2024-10-17 02:03:56
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.thread;
@@ -23,7 +23,7 @@ public class Worker extends Thread {
         while (isRunning) {
             try {
                 // 获取任务并执行
-                Task task = taskQueue.getTask();
+                ITask task = taskQueue.getTask();
                 if (task != null) {
                     task.execute();
                 }

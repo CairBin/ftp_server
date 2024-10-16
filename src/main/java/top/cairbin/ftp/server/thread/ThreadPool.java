@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 01:56:12
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 02:00:09
+ * @LastEditTime: 2024-10-17 02:03:52
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.thread;
@@ -13,7 +13,7 @@ package top.cairbin.ftp.server.thread;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThreadPool {
+public class ThreadPool implements IThreadPool{
     private final List<Worker> workers;
     private final TaskQueue taskQueue;
 
@@ -45,7 +45,7 @@ public class ThreadPool {
      * @param {Task} task 任务
      * @return {*}
      */    
-    public void submit(Task task) {
+    public void submit(ITask task) {
         taskQueue.addTask(task);
     }
 
