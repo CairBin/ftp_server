@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 03:41:24
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 03:43:54
+ * @LastEditTime: 2024-10-17 03:49:08
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.utils;
@@ -18,6 +18,11 @@ import lombok.Setter;
 public class FtpMessage {
     public int code;
     public String message;
+
+    public FtpMessage(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     @Override
     public String toString() {
