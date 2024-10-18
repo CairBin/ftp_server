@@ -51,6 +51,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Guice Multibindings 扩展 -->
+    <!-- https://mvnrepository.com/artifact/com.google.inject.extensions/guice-multibindings -->
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-multibindings</artifactId>
+      <version>4.2.3</version>
+    </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
