@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 03:59:29
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 04:03:47
+ * @LastEditTime: 2024-10-17 06:09:42
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.socket;
@@ -26,7 +26,7 @@ public class Session {
     public boolean aborted;
     public long offset;
     public Socket socket;
-
+    
     public Session(Mode mode, Socket socket){
         this.mode = mode;
         this.finished = false;
