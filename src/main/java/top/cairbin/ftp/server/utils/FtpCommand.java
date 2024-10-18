@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 00:58:11
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 01:05:36
+ * @LastEditTime: 2024-10-18 01:09:14
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.utils;
@@ -22,6 +22,7 @@ public enum FtpCommand {
     CDUP,   // 改变到父目录
     DELE,   // 删除文件
     LIST,   // 列出子目录和文件
+    NLST,   // 同NLIST
     NLIST,  // 列出子目录或其它属性文件
     MKD,    // 创建目录
     PWD,    // 显示当前目录
@@ -44,5 +45,6 @@ public enum FtpCommand {
     
     // 其他
     NOOP,             // 检查服务器是否工作
-    SYST              // 获取服务器所用OS
+    SYST,              // 获取服务器所用OS
+    FEAT
 }
