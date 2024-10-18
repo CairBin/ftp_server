@@ -47,7 +47,13 @@ public class FtpCommandParser {
                 case MKD:
                     args = msg[1];
                     break;
+                case XMKD:
+                    args = msg[1];
+                    break;
                 case RMD:
+                    args = msg[1];
+                    break;
+                case XRMD:
                     args = msg[1];
                     break;
                 case RNFR:

@@ -46,5 +46,9 @@ public enum FtpCommand {
     // 其他
     NOOP,             // 检查服务器是否工作
     SYST,              // 获取服务器所用OS
-    FEAT
+    FEAT,
+
+    XMKD,
+    XRMD,
+    XPWD,
 }

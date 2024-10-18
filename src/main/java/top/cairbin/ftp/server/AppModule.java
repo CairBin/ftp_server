@@ -15,6 +15,9 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
 
+import top.cairbin.ftp.server.file.FileManager;
+import top.cairbin.ftp.server.file.IFileManager;
+import top.cairbin.ftp.server.logger.ILogger;
 import top.cairbin.ftp.server.logger.Log4j;
 import top.cairbin.ftp.server.socket.Server;
 import top.cairbin.ftp.server.socket.handler.AbortHandler;
@@ -46,9 +49,6 @@ import top.cairbin.ftp.server.socket.handler.UserHandler;
 import top.cairbin.ftp.server.thread.IThreadPool;
 import top.cairbin.ftp.server.thread.ThreadPool;
 import top.cairbin.ftp.server.utils.FtpCommand;
-import top.cairbin.ftp.server.file.FileManager;
-import top.cairbin.ftp.server.file.IFileManager;
-import top.cairbin.ftp.server.logger.ILogger;
 
 public class AppModule extends AbstractModule{
     @Override
@@ -87,6 +87,12 @@ public class AppModule extends AbstractModule{
         // NLST 同 NLIST
         handlerMapBinder.addBinding(FtpCommand.NLST).to(NlistHandler.class);
         handlerMapBinder.addBinding(FtpCommand.RETR).to(RetrHandler.class);
+        // 同MKD
+        handlerMapBinder.addBinding(FtpCommand.XMKD).to(MkdHandler.class);
+        // 同RMD
+        handlerMapBinder.addBinding(FtpCommand.XRMD).to(RmdHandler.class);
+        // 同PWD
+        handlerMapBinder.addBinding(FtpCommand.XPWD).to(PwdHandler.class);
         bind(Server.class).in(Singleton.class);
     }   
 
