@@ -5,14 +5,13 @@
  * @version: 
  * @Date: 2024-10-17 03:55:52
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-18 07:53:17
+ * @LastEditTime: 2024-10-19 14:50:15
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.socket;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -39,43 +38,84 @@ import top.cairbin.ftp.server.utils.PathValidator;
 
 @Singleton
 public class Server {
-
     @Inject
     private ILogger logger;    
-    
     @Inject 
     private IThreadPool threads;
 
     private ServerSocket listener;
     private PathValidator root;
     private Mutex<HashMap<String, Mutex<User>>> users;
-    private String pasvIp;
     private ServerSocket pasvListener;
-    private int pasvPort;
 
-    public Server() {
-        this.users = new Mutex<>(new HashMap<>());
+    private final ServerConfig serverConfig;
+
+    private final Mutex<HashMap<String, Object>> data; // 存放自定义数据
+
+    /**
+     * @description: 此构造函数用于给依赖注入容器使用
+     * @return {*}
+     */    
+    public Server(ServerConfig serverConfig) throws IOException {
+        this.users  = new Mutex<>(new HashMap<>());
+        this.data   =  new Mutex<>(new HashMap<>());
+        this.root = new PathValidator(serverConfig.rootDirectory);
+        this.serverConfig = serverConfig;
     }
 
+    /**
+     * @description: 普通构造函数
+     */    
+    public Server(ServerConfig serverConfig, ILogger logger, IThreadPool threads) throws IOException{
+        this(serverConfig);
+        this.logger = logger;
+        this.threads = threads;
+        this.root = new PathValidator(serverConfig.rootDirectory);
+    }
+
+    /** 
+     * @description: 获取被动模式的Listener
+     */
     public ServerSocket getPasvListener() {
         return this.pasvListener;
     }
 
-    public void setPasvListener(ServerSocket listener) {
-        this.pasvListener = listener;
+    /**
+     * @description: 设置被动模式的监听器
+     * @param {ServerSocket} serverSocket
+     * @return {*}
+     */    
+    public void setPasvListener(ServerSocket serverSocket){
+        this.pasvListener = serverSocket;
     }
 
-    /** 
-     * @description: 设置FTP工作的根目录
-     * @param {String} root
+    /**
+     * @description: 处理被动模式下会话设置
+     * @param {Mutex<User>} userMtx
+     * @return {*}
      */    
-    public void setRoot(String root) throws Exception {
-        File dir = new File(root);
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new IOException("Failed to create directory: " + root);
-        }
-        this.root = new PathValidator(root);
-        logger.warn("[Server] Set working directory: {}", this.root.getRealPath());
+    public void pasvAcceptSession(Mutex<User> userMtx){
+        this.threads.submit(()->{
+            userMtx.lock();
+            try {
+                var socket = this.pasvListener.accept();
+                logger.debug("[Server-PASV]Accepting pasv connection");
+                userMtx.getData().setSession(new Mutex<Session>(new Session(Mode.PASV, socket)));
+            }catch(Exception e) {
+                logger.error("[Server-PASV]Accept error: {}", e);
+                logger.error("[Server-PASV]Accept error message: {}", e);
+            }finally{
+                userMtx.unlock();
+            }
+        });
+    }
+
+    /**
+     * @description: 获取自定义数据的锁对象
+     * @return {*}
+     */    
+    public Mutex<HashMap<String, Object>> getDataMutex(){
+        return this.data;
     }
 
     /** 
@@ -95,7 +135,7 @@ public class Server {
     }
 
     /** 
-     * @description: 获取根目录
+     * @description: 获取根目录的PathValidator
      * @return {PathValidator}
      */    
     public PathValidator getRoot() {
@@ -103,27 +143,11 @@ public class Server {
     }
 
     /** 
-     * @description: 设置被动模式的IP
-     * @param {String} ip
-     */    
-    public void setPasvIp(String ip) {
-        this.pasvIp = ip;
-    }
-
-    /** 
-     * @description: 设置被动模式的端口
-     * @param {int} port
-     */    
-    public void setPasvPort(int port) {
-        this.pasvPort = port;
-    }
-
-    /** 
      * @description: 获取被动模式的端口
      * @return {int}
      */    
     public int getPasvPort() {
-        return this.pasvPort;
+        return this.serverConfig.pasvPort;
     }
 
     /** 
@@ -131,25 +155,49 @@ public class Server {
      * @return {String}
      */    
     public String getPasvIp() {
-        return this.pasvIp;
+        return this.serverConfig.pasvAddress;
+    }
+
+    /** 
+     * @description: 获取用户信息
+     * @return {FtpCommandParser}
+     */
+    public final UserConfig getUserConfig(String username){
+        return this.serverConfig.userConfigs.get(username);
+    }
+
+    /**
+     * @description: 是否允许匿名登陆
+     * @return {boolean}
+     */    
+    public boolean isAllowAnonymous(){
+        return this.serverConfig.allowAnonymous;
+    }
+
+    /**
+     * @description: 是否存在此用户配置
+     * @return {boolean}
+     */    
+    public boolean hasUserConfig(String username){
+        return this.serverConfig.userConfigs.containsKey(username);
     }
 
     /** 
      * @description: 初始化服务器Socket
      * @param {int} port
      */    
-    public void createSocket(int port) throws IOException {
+    public void initSocket() throws IOException {
+        int port = this.serverConfig.port;
         this.listener = new ServerSocket(port);
         logger.warn("[Server] Server is listening on port {}", port);
         logger.warn("[Server] Server address: {}", this.listener.getLocalSocketAddress());
     }
 
+
     /** 
      * @description: 开始监听
      */    
     public void listener() throws Exception {
-        validateServerState();
-
         while (true) {
             Socket socket = this.listener.accept();
             logger.info("[Server] Connected from {}", socket.getRemoteSocketAddress());
@@ -163,7 +211,7 @@ public class Server {
      */    
     public void handle(Socket socket) {
         SocketHelper helper = new SocketHelper(socket);
-        handleLogin(helper);
+        handleHello(helper);
 
         try {
             var writerMutex = new Mutex<BufferedWriter>(helper.getWriter("UTF-8"));
@@ -173,12 +221,6 @@ public class Server {
         } catch (Exception e) {
             logger.error("[Server] Error: {}", e.getMessage(), e);
         }
-    }
-
-    private void validateServerState() throws Exception {
-        if (this.root == null) throw new Exception("Working directory is null!");
-        if (this.listener == null) throw new Exception("TCP listener is null!");
-        if (this.pasvIp == null) throw new Exception("Passive IP is null!");
     }
 
     private void processClientMessages(SocketHelper helper, Mutex<BufferedWriter> writerMutex, BufferedReader reader) throws IOException {
@@ -200,6 +242,19 @@ public class Server {
             if (params.cmd == FtpCommand.QUIT) {
                 logger.debug("[Server] QUIT message received");
                 removeUser(helper);
+            }
+
+            if(params.cmd != FtpCommand.USER && params.cmd != FtpCommand.PASS){
+                userMtx.lock();
+                boolean flag = userMtx.getData().state == UserState.LOGGING;
+                userMtx.unlock();
+                if(flag){
+                    logger.warn("[Server] Illegal handling");
+                    sendIllegalResponse(writerMutex, "Not logged in");
+                    helper.close();
+                    removeUser(helper);
+                    return;
+                }
             }
 
             threads.submit(() -> {
@@ -226,7 +281,7 @@ public class Server {
         return users.lockAndGet(mapper -> mapper.get(helper.getRemoteAddress()));
     }
 
-    private void handleLogin(SocketHelper helper) {
+    private void handleHello(SocketHelper helper) {
         users.lock();
         try {
             String address = helper.getRemoteAddress();
@@ -263,6 +318,17 @@ public class Server {
         writerMtx.lockAndSet(writer -> {
             try {
                 writer.write(FtpMessage.fmtMessage(550, errorMessage));
+                writer.flush();
+            } catch (Exception err) {
+                logger.error("[Server] Writing message error: {}", err.getMessage());
+            }
+        });
+    }
+
+    private void sendIllegalResponse(Mutex<BufferedWriter> writerMtx, String message){
+        writerMtx.lockAndSet(writer -> {
+            try {
+                writer.write(FtpMessage.fmtMessage(530, message));
                 writer.flush();
             } catch (Exception err) {
                 logger.error("[Server] Writing message error: {}", err.getMessage());
