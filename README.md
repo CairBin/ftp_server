@@ -14,9 +14,12 @@ Java实现的FTP服务端。
 
 * 封装了Mutex和RwLock的包装类
 
-* 工作目录、被动模式的端口号、IP地址可进行配置
+* 工作目录、控制连接的端口号、被动模式的端口号与地址、用户名和口令等可通过配置文件配置
 
 * 支持ASCII和BINARY两种模式
+
+* 用户口令校验，可通过配置选择性开放匿名账户(anonymous)
+
 
 
 * 对FTP客户端命令解析，实现FTP命令如下：
@@ -64,10 +67,45 @@ public enum FtpCommand {
 
     XMKD,
     XRMD,
-    XPWD
+    XPWD,
+    LPSV
 }
 ```
 
+## 配置文件
+
+配置文件名必须是`ftp`，扩展名可以是`.conf`或`.json`。
+
+```conf
+app{
+    name = "ftp_server"
+    version = "1.0"
+    server = {
+        port = 21
+        pasvPort = 20
+        pasvAddress = "127.0.0.1"
+        rootDirectory = "temp",
+        allowAnonymous = false
+    }
+
+    users = {
+        cairbin = {
+            password = "123456"
+        }
+    }
+}
+```
+
+
 ## 其他
 
-目前仅在MacOS环境下终端的FTP客户端进行连接、命令测试。
+开发测试环境为MacOS，支持文件、目录、主动/被动模式等基本功能测试正常。
+Windows下仅支持少量命令，但基本功能可以使用。
+
+引入的依赖库如下（并不一定完全）：
+
+* Guice
+* lombok
+* log4j
+* junit
+* typesafe config
