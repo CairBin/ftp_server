@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 00:58:11
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-18 01:09:14
+ * @LastEditTime: 2024-10-19 14:44:30
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.utils;
@@ -51,4 +51,5 @@ public enum FtpCommand {
     XMKD,
     XRMD,
     XPWD,
+    LPSV
 }
