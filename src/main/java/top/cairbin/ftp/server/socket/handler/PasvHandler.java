@@ -5,7 +5,7 @@
  * @version: 1.0.1
  * @Date: 2024-10-17 18:50:24
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-19 14:52:18
+ * @LastEditTime: 2024-10-20 23:36:17
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 
@@ -48,9 +48,11 @@ public class PasvHandler implements IHandler {
                 socket.bind(new InetSocketAddress(port));
                 server.setPasvListener(socket);
             }
-
+            // 获取实际端口号，port为0时为随机端口号
+            int realPort = server.getPasvListener().getLocalPort();
+            logger.info("[PasvHandler] The passive port is " + realPort);
             // 向客户端发送被动模式的地址和端口信息
-            sendPasvResponse(writerMtx, ip, port);
+            sendPasvResponse(writerMtx, ip, realPort);
 
             // 提交任务到线程池，等待 PASV 连接
             server.getThreadPool().submit(() -> acceptPasvConnection(userMtx));
