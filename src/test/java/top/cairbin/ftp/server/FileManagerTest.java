@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 03:13:52
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 06:06:26
+ * @LastEditTime: 2024-10-21 01:32:05
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server;
@@ -30,7 +30,7 @@ public class FileManagerTest {
         IThreadPool pool = InjectorFactory.getInjector().getInstance(IThreadPool.class);
         pool.submit(()->{
             try{
-                var lock = manager.get("hello.txt");
+                var lock = manager.get("temp/hello.txt");
                 lock.write(file->{
                     try{
                         file.getWriter().append("Hello World");
