@@ -4,16 +4,13 @@
   <groupId>top.cairbin.ftp.server</groupId>
   <artifactId>ftp_server</artifactId>
   <name>ftp_server</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <url>http://www.example.com</url>
   <build>
     <resources>
       <resource>
         <filtering>true</filtering>
         <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>*</exclude>
-        </excludes>
       </resource>
     </resources>
     <pluginManagement>
