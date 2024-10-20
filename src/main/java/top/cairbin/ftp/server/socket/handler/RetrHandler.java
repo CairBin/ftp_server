@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-18 08:03:34
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-18 09:39:39
+ * @LastEditTime: 2024-10-21 02:31:44
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.socket.handler;
@@ -13,6 +13,7 @@ package top.cairbin.ftp.server.socket.handler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,13 +100,12 @@ public class RetrHandler implements IHandler {
 
     private boolean performFileTransfer(Mutex<BufferedWriter> writerMtx, Path path, Mutex<Session> sessionMtx) {
         sessionMtx.lock();
-        try (BufferedReader reader = Files.newBufferedReader(path)){
-            SocketHelper helper = new SocketHelper(sessionMtx.getData().socket);
-            var writer = helper.getWriter("UTF-8");
-            char[] buffer = new char[2048];
+        try (InputStream inputStream = Files.newInputStream(path)){
+            var writer = sessionMtx.getData().getSocket().getOutputStream();
+            byte[] buffer = new byte[2048];
             int bytesRead;
             
-            while ((bytesRead = reader.read(buffer)) != -1) {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
                 writer.write(buffer, 0, bytesRead);
                 writer.flush();            
             }
