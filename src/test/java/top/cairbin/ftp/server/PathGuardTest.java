@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 16:06:52
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-17 16:10:29
+ * @LastEditTime: 2024-10-21 00:08:18
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server;
@@ -18,7 +18,7 @@ import org.junit.Test;
 public class PathGuardTest {
     @Test
     public void testPathGuard() throws IOException{
-        PathGuard pg = new PathGuard("guard_test/");
+        PathGuard pg = new PathGuard("temp/guard_test/");
 
         pg.cwd("test");
         System.out.println("Current directory: " + pg.pwd());
