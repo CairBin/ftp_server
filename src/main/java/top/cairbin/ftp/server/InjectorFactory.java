@@ -5,7 +5,7 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 00:36:55
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-21 01:30:24
+ * @LastEditTime: 2024-10-21 02:14:17
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server;
@@ -121,12 +121,17 @@ class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private Config getConfig(){
+    private Config getConfig(ILogger logger){
         String ftpConfigPath = System.getenv("FTP_SERVER_CONFIG");
         if(ftpConfigPath == null || ftpConfigPath.isEmpty()){
-            ftpConfigPath = "ftp";
+            logger.info("Not found FTP_SERVER_CONFIG.");
+            logger.info("Loading default configuration...");
+            return ConfigFactory.load("ftp");
+        }else{
+            logger.info("Loding configuration: " + ftpConfigPath);
+            Path path = Paths.get(ftpConfigPath);
+            return ConfigFactory.parseFile(path.toFile());
         }
-        return ConfigFactory.load(ftpConfigPath);
     }
 
     @Provides
