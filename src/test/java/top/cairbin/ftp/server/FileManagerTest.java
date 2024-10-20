@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 03:13:52
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-21 01:32:05
+ * @LastEditTime: 2024-10-21 01:44:17
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server;
@@ -26,7 +26,7 @@ public class FileManagerTest {
     @Test
     public void testFileCachePool() throws Exception {
         IFileManager manager = InjectorFactory.getInjector().getInstance(IFileManager.class);
-        manager.createFile("hello.txt");
+        manager.createFile("temp/hello.txt");
         IThreadPool pool = InjectorFactory.getInjector().getInstance(IThreadPool.class);
         pool.submit(()->{
             try{
