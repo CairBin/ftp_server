@@ -86,7 +86,7 @@ app{
         port = 21
         pasvPort = 20
         pasvAddress = "127.0.0.1"
-        rootDirectory = "temp",
+        rootDirectory = "/Users/cairbin/Others/test/ftp_path",
         allowAnonymous = false
     }
 
@@ -100,7 +100,7 @@ app{
 
 * 当端口号为0的时候，FTP服务器将使用由操作系统随机返回的一个可用端口号，对于控制连接和被动模式下的数据连接都是如此。
 
-* 对于FTP工作目录，请设置为绝对路径
+* 对于FTP工作目录`rootDirectory`，请设置为绝对路径
 
 
 ## 打包&运行
