@@ -5,13 +5,14 @@
  * @version: 1.0.0
  * @Date: 2024-10-17 00:36:55
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-19 14:44:07
+ * @LastEditTime: 2024-10-21 01:30:24
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server;
 
 import java.io.IOException;
-import java.util.List;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -120,8 +121,17 @@ class AppModule extends AbstractModule {
 
     @Provides
     @Singleton
-    private Server getFtpServer(IThreadPool pool, ILogger logger) throws IOException {
-        Config config = ConfigFactory.load("ftp");
+    private Config getConfig(){
+        String ftpConfigPath = System.getenv("FTP_SERVER_CONFIG");
+        if(ftpConfigPath == null || ftpConfigPath.isEmpty()){
+            ftpConfigPath = "ftp";
+        }
+        return ConfigFactory.load(ftpConfigPath);
+    }
+
+    @Provides
+    @Singleton
+    private Server getFtpServer(IThreadPool pool, ILogger logger, Config config) throws IOException {
         ServerBuilder builder = new ServerBuilder();
         builder.setAllowAnonymous(config.getBoolean("app.server.allowAnonymous"));
         builder.setPort(config.getInt("app.server.port"));
