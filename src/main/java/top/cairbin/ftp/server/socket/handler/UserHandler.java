@@ -5,7 +5,7 @@
  * @version: 
  * @Date: 2024-10-17 14:00:53
  * @LastEditors: Xinyi Liu(CairBin)
- * @LastEditTime: 2024-10-19 12:39:56
+ * @LastEditTime: 2024-10-22 02:51:45
  * @Copyright: Copyright (c) 2024 Xinyi Liu(CairBin)
  */
 package top.cairbin.ftp.server.socket.handler;
@@ -52,7 +52,7 @@ public class UserHandler implements IHandler {
             }
 
             // 验证匿名用户
-            if(username.toLowerCase() == "anonymous" && !server.isAllowAnonymous()){
+            if(username.toLowerCase().equals("anonymous") && !server.isAllowAnonymous()){
                 logger.info("[UserHandler]Anyonmous account not allowed.");
                 writerMtx.lockAndSet(writer->{
                     try {
